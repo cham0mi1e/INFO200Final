@@ -1,0 +1,578 @@
+---
+title: "Final Project"
+author: "Hannah Bolton, Vidhya Narayanan, Aishi Sharma, Blake Needham"
+date: "2023-12-01"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(readr)
+library(data.table)
+library(R.utils)
+library(tidyverse)
+library(ggplot2)
+library(extrafont)
+library(knitr)
+```
+
+# 1. Introduction  
+Attention deficit hyperactive disorder (ADHD) stands as a prevalent mental
+disorder among children, characterized by symptoms like difficulty focusing,
+excessive movement, and impulsive behavior. Its chronic nature significantly
+affects various facets of life such as academic performance, professional
+success, relationships, and daily functioning. When left unaddressed, ADHD can
+detrimentally impact a child's self-esteem and social abilities. Roughly 8.4% of
+children and 2.5% of adults are estimated to have ADHD, a condition often
+recognized in school-aged kids due to classroom disruptions or academic
+struggles. Diagnosis rates are higher among boys due to variations in symptom
+expression, with boys more prone to hyperactivity and outward symptoms, while
+girls might display inattentiveness. However, this doesn't imply a higher
+likelihood of ADHD in boys; it reflects differences in how symptoms manifest.
+
+The way that ADHD is portrayed in the media frequently leads to the idea that it
+is an impulsive, hyperactive disorder. They could find it difficult to remain
+motionless, disrupt others, and act impulsively without thinking through the
+repercussions. ADHD is also characterized by inattentiveness. People suffering
+from ADHD may find it difficult to focus, forget things readily, and misplace
+things easily. Many representations emphasize the difficulties that people with
+ADHD have in the classroom. Their inability to concentrate, stay organized, and
+finish assignments could cause them to suffer academically. Positively speaking,
+some representations highlight the inventiveness and creativity connected to
+ADHD. Some people with ADHD might be excellent artists or do well in fast-paced
+environments. Gender variations in ADHD presentation may occasionally be
+reflected in representations. Although girls with ADHD may present with more
+inattentive symptoms than boys, this can sometimes result in an underdiagnosis,
+or an incorrect diagnosis, which is very dangerous for everyone involved. Stigma
+surrounding the illness leads to some people hiding thier diagnosis out of fear
+of being treated differently from their peers.
+
+#### *Relevance to each team member*
+Blake -  
+I have a brother who is diagnosed with ADHD as well as Dyslexia. He handles both
+of these together with support from our family. His diagnoses came recently, so
+we are all getting adjusted to this new way of life, and figuring out how we can
+all best support him.  
+Aishi -  
+I grew up around a lot of individuals who were diagnosed with ADHD as a child. I
+wanted to explore the topic of the disparity of ADHD diagnoses after discussing
+the topic of disparity of ADHD diagnoses with Hannah.  
+Hannah -  
+I was diagnosed with ADHD in March which is why this topic is highly prevalent
+in my life. I also recently wrote a paper discussing the disparities in ADHD
+diagnoses among people of different races.  
+Vidhya -  
+When I was writing my “better information world” essay for Info 200, I wound up
+doing research on how different racial minorities in particular were negatively
+impacted by a lack of resources to diagnose different disorders. When I was
+given this project, it reminded me of that scenario, so after communicating with
+my group we realized that ADHD is a very relevant topic to conduct research on.
+
+Even though ADHD is prevalent among developmental disorders, it remains widely
+misunderstood, leading to potential harm for those affected. Misconceptions
+surrounding ADHD, like doubting its validity as a treatable condition or
+assuming unnecessary medication usage in children, can discourage individuals
+from seeking necessary treatment. A recent study in 2021 highlighted the
+pervasive impact of these myths on the self-perception of those with ADHD,
+contributing to reluctance to seek help or fostering feelings of guilt and
+shame. Shockingly, a 2019 study revealed that individuals with ADHD are
+approximately three times more prone to suicide attempts than the general
+population. When these stigmas and misconceptions impede access to proper
+treatment, the consequences can be tragically life-threatening.
+
+## Data
+
+The datasets we are using come directly from the Center for Disease Control and
+Prevention (CDC), which is a well-known and reputable source for medical data.
+We decided to use these datasets because the website allowed us to customize
+what years and categories of data we were interested in, so out of different
+mental disorders we were able to focus on ADHD specifically, which was not an
+option on the other websites that we investigated. The ability to pick the year
+also proved to be very convenient, because one of the essential elements of our
+investigation was the ability to compare parallel data between 2000 and 2020.
+The website allowed us to download two CSV files, one from 2000, and one from
+2020. The datasets originate from a survey done using data from a variety of
+households across the country, collecting data about each individual living
+there. The Data collection was done by the Center for Disease Control (CDC) is
+this federal organization is a division of the Department of Health and Human
+Services in the United States. The main goal of the CDC, which has its main
+office in Atlanta, Georgia, is to safeguard public health and safety by
+preventing and controlling illnesses, accidents, and disabilities. This data can
+be publicly accessed by anyone with adequate internet access. There are not any
+explicit restrictions but the website could prove to be difficult for someone
+with minimal experience navigating databases and interpreting complex data
+structures.
+
+The datasets contain information on 12,514 people, if they have an ADHD
+diagnosis, their race, and their household incomes, with samples coming from
+both the years 2000 and 2020.
+
+We only ran into a few issues with data quality in our work. There were very few
+data points for certain races such as Native and African Americans. This became
+apparent in a few of the calculations that we made. For example, in one of the
+plots we made, we intended to find what percentage of each race, depending on
+income group had ADHD. The data stated that 50% of Native Americans above the
+income level of $100,000 had ADHD. This data seemed to be a potential outlier,
+so when we investigated what the issue could be, we noticed that only 39 Native
+Americans were interviewed. This is an incredibly low number compared to the
+6,868 white people who were surveyed. In addition to the inconsistent
+proportions of each race represented in the data, the majority of the data
+points in the original datasets had not been asked the question regarding ADHD
+diagnosis, so we had to filter them out to provide accurate and relevant data.
+Additionally, in approximately 40% of the data points in the original dataset,
+there were five race values regarding “unknown race.” These pieces of data
+proved to be irrelevant to our data analysis because our report is contingent on
+the racial identities of the people we are observing, so we excluded them.
+
+Each row in our final dataset represents the data about one racial group in a
+certain year that belongs to a certain income group, and whether or not they
+have ADHD. We have 12,514 observations in our merged dataset of the 2000 and
+2020 data.
+
+The relevant variables to our dataset are the lower bound of household income
+levels, the upper bound of household income levels, racial category, whether
+they are white or non-white, gender, year, and the type of ADHD diagnosis. The
+year of collection is called ‘year’ and is coded with numerical values. The
+gender is called ‘sex’ and is coded by either ‘M’ or ‘F’. The racial category is
+called ‘race’ and is coded by several different values: ‘White’, ‘Black’,
+‘Native’, and ‘Asian’. The white vs. non-white variable is called ‘whiteOrNot’,
+and is coded by either ‘white’ or ‘non-white’. The variable for the type of ADHD
+diagnosis is called ‘diagnosisStatus’ and is coded by three different values:
+‘No-ADHD’, ‘Has-ADHD’, and ‘Untested’. The variable for the lower bound of
+household income level is called ‘lowerBoundIncome’ and the variable for the
+upper bound of household income level is called ‘upperBoundIncome’; both are
+coded by numerical values representing USD.
+
+We did not have any missing, non-plausible, or other quality issues in our final
+dataset, other than a low number of certain races interviewed at all, in
+particular Native Americans.
+
+```{r}
+# loading the datasets
+data2000 <- read.delim("data/adhd race income 2000.csv", sep = ",")
+data2020 <- read.delim("data/adhd race income 2020.csv", sep = ",")
+
+# cleaning up our 2000 dataset
+filter2000 <- data2000 %>%
+  select(YEAR, RACENEW, SEX, INCFAM97ON2, ADDEV) %>%
+  rename(year = YEAR, race = RACENEW, sex = SEX)
+filter2000 <- filter2000 %>%
+  mutate(
+    lowerBoundIncome = case_when(
+      INCFAM97ON2 == 10 ~ 0,
+      INCFAM97ON2 == 20 ~ 35000,
+      INCFAM97ON2 %in% c(30, 31) ~ 75000,
+      INCFAM97ON2 == 32 ~ 100000
+    ),
+    upperBoundIncome = case_when(
+      INCFAM97ON2 == 10 ~ 34999,
+      INCFAM97ON2 == 20 ~ 74999,
+      INCFAM97ON2 %in% c(30, 31) ~ 99999,
+      INCFAM97ON2 == 32 ~ 100000
+    )
+  ) %>%
+  filter(INCFAM97ON2 %in% c(10, 20, 30, 31, 32)) %>% 
+  select(-INCFAM97ON2)  
+filter2000 <- filter2000 %>%
+  filter(race %in% c(100, 200, 300, 400)) %>%
+  mutate(
+    race = case_when(
+      race == 100 ~ "White",
+      race == 200 ~ "Black",
+      race == 300 ~ "Native",
+      race == 400 ~ "Asian"
+    ),
+    whiteOrNot = ifelse(race == "White", "white", "non-white")
+  )
+filter2000 <- filter2000 %>%
+  filter(sex %in% c(1, 2)) %>%
+  mutate(sex = ifelse(sex == "1", "M", "F"))
+filter2000 <- filter2000 %>%
+  filter(ADDEV %in% c(1, 2, 9)) %>%
+  mutate(
+    diagnosisStatus = case_when(
+      ADDEV == 1 ~ "No-ADHD",
+      ADDEV == 2 ~ "Has-ADHD",
+      ADDEV == 9 ~ "Untested"
+    )
+  ) %>%
+  select(-ADDEV)
+
+# cleaning up the 2020 dataset
+filter2020 <- data2020 %>%
+  select(YEAR, RACENEW, SEX, INCFAM07ON, ADDEV) %>%
+  rename(year = YEAR, race = RACENEW, sex = SEX) %>%
+  mutate(
+    lowerBoundIncome = case_when(
+      INCFAM07ON == 11 ~ 0,
+      INCFAM07ON == 23 ~ 75000,
+      INCFAM07ON %in% c(12, 20) ~ 35000,
+      INCFAM07ON == 24 ~ 100000
+    ),
+    upperBoundIncome = case_when(
+      INCFAM07ON == 11 ~ 34999,
+      INCFAM07ON == 23 ~ 100000,
+      INCFAM07ON %in% c(12, 20) ~ 74999,
+      INCFAM07ON == 24 ~ 1000000
+    )
+  ) %>%
+  filter(INCFAM07ON %in% c(11, 12, 20, 23, 24)) %>%  
+  select(-INCFAM07ON) 
+filter2020 <- filter2020 %>%
+  filter(race %in% c(100, 200, 300, 400)) %>%
+  mutate(
+    race = case_when(
+      race == 100 ~ "White",
+      race == 200 ~ "Black",
+      race == 300 ~ "Native",
+      race == 400 ~ "Asian"
+    ),
+    whiteOrNot = ifelse(race == "White", "white", "non-white")
+  )
+filter2020 <- filter2020 %>%
+  filter(sex %in% c(1, 2)) %>%
+  mutate(sex = ifelse(sex == "1", "M", "F"))
+filter2020 <- filter2020 %>%
+  filter(ADDEV %in% c(1, 2, 9)) %>%
+  mutate(
+    diagnosisStatus = case_when(
+      ADDEV == 1 ~ "No-ADHD",
+      ADDEV == 2 ~ "Has-ADHD",
+      ADDEV == 9 ~ "Untested"
+    )
+  ) %>%
+  select(-ADDEV)
+
+# merging the datasets so we are able to compare the two years
+mergedData <- rbind(filter2000, filter2020)
+write.csv(mergedData, "Data/Final Cleaned Data.csv", row.names=FALSE)
+```
+
+Here is a sample of our dataset:
+```{r sample dataset}
+kable(mergedData[sample(nrow(mergedData), 10),])
+```
+
+# 2. Methods
+
+From the original datasets, we included the variables ‘YEAR’, ‘RACENEW’, ‘SEX’,
+‘ADDEV’, and either ‘INCFAM97ON2’ or ‘INCFAM07ON’, depending on the dataset. For
+ease and continuity of reading and writing variable names, we changed some of
+the variable names; ‘YEAR’ became ‘year’, ‘RACENEW’ to race, and ‘SEX’ to ‘sex’.
+We did not change the names of ‘ADDEV’, ‘INCFAM97ON2’, and ‘INCFAM07ON’ because
+we knew we were going to modify them further and would be able to replace those
+values at a later point in the process.
+
+Once selecting the variables we knew we wanted to work with, we needed to modify
+a few variables. The income variables, ‘INCFAM97ON2’ and ‘INCFAM07ON’, belonging
+to the 2000 and 2020 datasets respectively, had generic value placeholders that
+represented different income ranges, and the ranges differed between years
+because they altered their question after 2007. We decided to modify these
+representations of household income by creating two new variables:
+‘lowerBoundIncome’ and ‘upperBoundIncome’. These variables are coded as
+numerical values representing the lower and upper bounds of household income
+that were specified in the original datasets’ codebooks. When doing this, we had
+to create a couple generic values: for any ‘unspecified’ options, we represented
+those by the number -999, and for any income range without an upper bound we
+represented the upper bound with 1,000,000 as that number is far higher than any
+of the other specified values.
+
+The variable ‘ADDEV’ was also coded with generic numerical placeholders
+representing different diagnosis statuses. As mentioned previously, a majority
+of the observations in both datasets had not even been asked the question
+regarding ADHD, so we had to filter out any observations with that value in
+‘ADDEV’ to be able to comprehensively analyze the data. We then converted the
+numerical placeholders to the more easily comprehendible values of ‘No-ADHD’,
+‘Has-ADHD’, and ‘Untested’, and renamed the variable ‘diagnosisStatus’.
+
+We also wanted to make the ‘race’ column more easily understandable, as it too
+was coded as numerical placeholders for different racial identifications. Also
+as mentioned previously, there were several values that were some version of
+“race unknown”, so we decided to cut out any observations with those values in
+the race column as one of the main points of analysis in our project is race.
+We acknowledged that this could potentially be exclusionary, but it is difficult
+to analyze data with many unknown values, particularly when those values are for
+one of the main areas of examination. We then converted the numerical
+placeholders to ‘White’ for white-identifying individuals, ‘Black’ for Black- or
+African American-identifying individuals, ‘Native’ for Native
+American-identifying individuals, and ‘Asian’ for Asian-identifying individuals.
+
+We combined the data for our 2000 and 2020 results into a data frame called
+‘mergedData’. We then created a summarization data frame called
+‘adhdPercentByRacePop’ where we grouped our data by year, race, and diagnosis
+status and then counted the total population of each race, as well as the
+population of each race that fell into each diagnosis category. We included six
+columns: year, race, diagnosisStatus, the number of people in that diagnosis
+status column (count), the RacePopulation, and then the percentage of count to
+RacePopulation (relativeToRacePopulation). This let us understand the prevalence
+of ADHD in each racial group based on the relative population for each racial
+group, as well seeing which groups were over/underrepresented in data collection.
+
+We selected our sample by using the data source that seemed most trustworthy,
+which was the CDC. Then, we decided on the years 2000 and 2020 because we felt
+it was a big enough time difference to examine any changes over time and those
+years had a lot of research conducted.
+
+A majority of the observations in both datasets had not even been asked the
+question regarding ADHD, so we had to filter out any observations with that
+value in ‘ADDEV’ to be able to comprehensively analyze the data. We then
+converted the numerical placeholders to the more easily comprehendible values of
+‘No-ADHD’, ‘Has-ADHD’, and ‘Untested’, and renamed the variable
+‘diagnosisStatus’. We also removed many of the “unsure about race” values
+because those would have just taken up space in our data tables.
+
+By removing a lot of the data, especially for the race column, those groups who
+were unsure lost their representation from the original data-set to ours, and
+maybe those groups would’ve helped us uncover significant statistics about the
+relationship between race, income, levels and ADHD diagnosis.
+
+# 3. Results
+
+We started with a dataset that included many columns besides the ones we chose,
+including columns for height and weight. Although these variables could
+contribute to an interesting discussion, our research is primarily focused on
+the relationship between race, ADHD diagnosis, and income level, so those
+variables were irrelevant to us. After getting rid of those columns, we changed
+the data values inside each of the columns. The values at first needed to be
+deciphered using a key, so we adjusted the data to match the values in the key
+so that the data frame can be interpreted by the casual reader. We also needed
+to adjust the data frame to match the manipulation requirements. We needed a new
+categorical variable, so we created a column called “whiteOrNot” that classified
+the races of each observation as either “white” or “non-white”. We needed a new
+numerical variable, so we took the character value that defined each income
+level and replaced it with two numerical columns, one representing the lower
+bound value of the income group and one representing the upper bound value. For
+our summarization data frame, we created a data frame that contained the number
+of people in each race + income group that had each type of adhd grouping (has
+adhd, doesnt have it, or unknown) in a column named count. For reference, the
+data frame also included the total population of observations in each race so
+readers can understand what the number of people in each adhd grouping compared
+to the total population of each group would look like proportionally in a column
+called racePopulation. In the final column titled relativeToRacePopulation, we
+did the operation count/racePopulation*100 to give us the percentage of people
+in each race & income croup that belong to each adhd grouping out of the total
+population.
+
+```{r population percentages, message = FALSE, warning = FALSE}
+# creating a dataframe that shows the percentage of diagnosed/undiagnosed/unknown
+# individuals per the total number of samples for that race
+adhdPercentByRacePop <- mergedData %>%
+  group_by(year, race, diagnosisStatus) %>%
+  summarize(
+    count = n(),
+  ) %>%
+  bind_rows( 
+    mergedData %>%
+      filter(whiteOrNot %in% c("Black", "Native", "Asian")) %>%
+      group_by(year, race, diagnosisStatus) %>%
+      summarize(
+        count = n(),  
+      )
+  ) %>%
+  arrange(desc(race)) %>%
+  ungroup() %>% 
+  group_by(year, race) %>%  
+  mutate(
+    racePopulation = sum(count),
+    relativeToRacePopulation = count / racePopulation * 100
+  )
+
+# creating a dataframe that shows the percentage of diagnosed/undiagnosed/unknown
+# individuals per the total number of samples
+adhdPercentByTotalPop <- mergedData %>%
+  group_by(year, race, diagnosisStatus) %>%
+  summarize(
+    count = n(), 
+  ) %>%
+  bind_rows(
+    mergedData %>%
+      filter(whiteOrNot %in% c("Black", "Native", "Asian")) %>%
+      group_by(year, race, diagnosisStatus) %>%
+      summarize(
+        count = n(), 
+      )
+  ) %>%
+  arrange(desc(race)) %>%
+  ungroup() %>%  
+  group_by(year) %>%  # 
+  mutate(
+    TotalPopulation = sum(count),
+    popPercent = count / TotalPopulation * 100
+  )
+```
+
+First, we created a bar graph that graphed the percentage of people out of the
+population of each race that had ADHD vs no ADHD vs. unknown for the years 2000
+and 2020. There are four different graphs for each race and two bar-columns on
+each one representing each year.
+
+```{r}
+ggplot(mergedData, aes(x = factor(year), fill = diagnosisStatus)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~race) +
+  labs(title = "Percentage of each race's population with each ADHD status, 2000 vs. 2020",
+       x = "Year",
+       y = "Percentage of People",
+       fill = "ADHD Status")  
+```
+
+In this graph, it is apparent that the presence of ADHD in 2000 was highest for
+the white population, but in 2020 there was a drastic spike in ADHD rates for
+Native individuals, making up about 25% of their total population. However, when
+we cross-referenced this with our summary data frame, we noticed that in 2020,
+Native people only had 62 values while White people had about 7,000, meaning
+that the data would probably not be as accurate. However, we did notice a bit
+of an increase in the ADHD levels of the Black population as well, matching the
+percentage of white people with an ADHD diagnosis in 2020.
+
+We wanted to see if there was any relationship between this and income levels,
+so we created a second graph that measured the percentage of people in each race
+that belonged to each income group each year.
+
+```{r percent of people in each race by income group}
+mergedData$lowerBoundIncome <- factor(mergedData$lowerBoundIncome, 
+                                      levels = c("0", "35000", "75000", "1e+05"),
+                                      labels = c("0-35,000", "35,000-75,000", "75,000-100,000", "100,000+"))
+
+# Create a bar plot with updated income group names
+ggplot(mergedData, aes(x = factor(year), fill = factor(lowerBoundIncome))) +
+  geom_bar(position = "fill") +
+  facet_wrap(~race) +
+  labs(title = "Percentage of each race that belongs to each income group, 2000 vs. 2020",
+       x = "Year",
+       y = "Percentage of People",
+       fill = "Income Group") 
+```
+
+Although we concluded that our data for Native Americans was slightly flawed,
+since we are only comparing it in reference with data from the same set of
+people, we figured comparing the data about Native Americans from the first
+graph to the second would not be detrimental to the accuracy of the patterns we
+find. For both Black people and Native Americans, as the rate of people in the
+0-35000 income category and 35000-75000 stayed relatively high, there was also a
+higher level of ADHD diagnosis. Although Asian Americans and white people had
+nearly identical income patterns in 2000 & 2020, the diagnosis rates were
+significantly lower for Asian Americans, and there were also a lot more white
+people used as data points than Asian Americans.
+
+Finally, we made a graph that combined both of our previous graphs: It compared
+the percentages of people in each income level per race with ADHD each year.
+This means that there were eight graphs total, with four for each race in 2000
+and then 2020.
+
+```{r percentage of people with adhd in each income group per race, fig.width=16, fig.height=10}
+merge2000 <- mergedData %>% filter(year == 2000)
+percentADHD2000 <- ggplot(merge2000, aes(x = factor(lowerBoundIncome), fill = diagnosisStatus)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~race) +
+  labs(title = "Percentage of each race, depending on income group, that belongs to each ADHD diagnosis group in 2000",
+       x = "Income Group",
+       y = "Percentage of People",
+       fill = "Diagnosis Status") +
+  scale_fill_manual(values = c("No-ADHD" = "salmon", "Has-ADHD" = "darkblue", "Untested" = "lightgreen")) 
+
+merge2020 <- mergedData %>% filter(year == 2020)
+percentADHD2020 <- ggplot(merge2020, aes(x = factor(lowerBoundIncome), fill = diagnosisStatus)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~race) +
+  labs(title = "Percentage of each race, depending on income group, that belongs to each ADHD diagnosis group in 2020",
+       x = "Income Group",
+       y = "Percentage of People",
+       fill = "Diagnosis Status") +
+  scale_fill_manual(values = c("No-ADHD" = "salmon", "Has-ADHD" = "darkblue", "Untested" = "lightgreen"))
+
+print(percentADHD2000)
+print(percentADHD2020)
+```
+
+In these graphs, we realized that, at least with the data given, there was not a
+very strong correlation between the income level and ADHD rate that could be
+applied across all groups. For Black people, there was a decently strong trend
+that grew in 2020 showing that lower income levels lead to higher rates of ADHD
+diagnosis, but on the other hand, Native Americans also had similar income
+levels and they saw the highest levels of ADHD in the 100,000+ population (but
+we must remember the data for the Native Americans has certain limitations). For
+Asian & White people, there was only a jump in ADHD levels primarily for lower
+income groups in the year 2020, but in 2000 they were about equal. However, one
+thing that was true was that ADHD diagnosis rates went up for *all* races from
+2000 to 2020.
+
+# 4. Findings
+
+### Our key findings:
+* There is a slight relationship between groups that have a higher number of
+“lower” income individuals and a higher rate of ADHD  diagnosis.
+    + Although race and income are possible contributing factors, it is important to
+note that a higher rate of diagnostic checks for ADHD can lead to a higher
+percentage of the population being screened as having ADHD.
+
+* It is not feasible to determine one relationship between ADHD diagnosis rates
+and income that fits all races for 2000 and 2020. However, it is safe to say
+that as the rates of ADHD grew from 2000 to 2020, lower income groups were more
+likely to also have a larger increase in ADHD for most racial groups excluding
+Native Americans.
+
+One limitation we faced was a lack of feasible data points for the Native
+American racial group despite having sufficient data for the other races. I
+believe our claim is decently substantiated and could be extended to serve as a
+starting point/catalyst for future research in the field, even if not good
+enough to be concrete evidence right now on a higher-tier research level.
+
+For future work, it would be ideal to have a dataset that has a semi-equal
+number of observations from each racial group and income level. This would, to a
+high extent, get rid of any doubt about a certain group of individuals having
+more representation / better data than another one. It would also be helpful to
+use more complex algorithms made specifically for high level data science, and
+not just the simple percentage based graphs we created using our level of R
+knowledge.
+
+# 5. Summary and Conclusion
+
+This project was very meaningful in gaining practice in analyzing datasets and
+figuring out ways to conclude, as well as evaluating the accuracy of the data
+and those conclusions. In cleaning data, we learned to negotiate with each other
+on one data would be significant and necessary to our investigation, and this
+allowed us to grab some meaningful intake.
+
+Through our summarization data frame, we were able to pinpoint some of the
+shortcomings of our data, such as the fact that the White population was grossly
+overrepresented, where as the native sample size was about less than 1% of
+that. Although we did not completely discard our data for Native Americans
+because of this fact, we did make sure to be conscious of the fact that the data
+may not be as reliable as with the other races.
+
+When we first compared the percentages of ADHD diagnosis for each race is 2000
+vs. 2020, we noticed that the percentage was highest for white people in 2000,
+but in 2020 there was a spike in the Native American ADHD rate and the rate for
+Black People. So, to see if there was any underlying economic cause for this, we
+also created a graph that compared the percentages of each race that eblonged to
+each income group for both years. We noticed that generally, the Black and 
+Native Americans tended to experience an augmentation/maintenance of the
+percentage of people in the “lower” income categories, whereas for White and
+Asian people the trend went down. Finally, to compare both our racial
+percentages and income percentages, we created a bar graph that investigated the
+rate of ADHD diagnosis for each race per income group. In this, we noticed that
+for Even though Asians and White folk had nearly identical income statistics,
+white people had higher levels of diagnosis, but those two groups shared the
+quality of staying low and not having a spike in growth. However, for the Black
+and Native lower income group there was a notable increase in ADHD rates from
+2000 to 2020 which ended up overtaking the white percentage. For Asian Americans
+as well there was a slightly higher rate of ADHD for the 0-35,000 income
+category, but it was still quite minimal.
+
+We were able to conclude that **although there is not one perfect trend that
+fits all races for a relationship between income and ADHD diagnosis rates, as
+the rates of ADHD grew from 2000 to 2020, lower income groups were more likely
+to also have a larger increase in ADHD**. This study opened our eyes to the fact
+that not all racial and income groups have equal access to ADHD information and
+screening within their communities, one of the side effects being that we were
+not able to conduct as precise of an investigation as we wanted. The results of
+this investigation could be used by school districts and medical centers, as
+they could figure out which geographical areas they need to put their focus into
+for understanding the causes of ADHD and screening based on income. Using the
+slight patterns we found between ADHD diagnosis and income for certain races,
+these organizations could also conduct a deeper dive into that, and see if there
+are any environmental issues that could be provoking this. These results could
+also be used by other researchers to inspire a future research paper on the
+topic.
